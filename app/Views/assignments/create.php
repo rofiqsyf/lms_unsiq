@@ -7,7 +7,7 @@
 
     <div class="card" style="max-width:800px;">
         <div class="card-body">
-            <form method="POST" action="<?= url('/courses/' . $course['id'] . '/assignments') ?>">
+            <form method="POST" action="<?= url('/courses/' . $course['id'] . '/assignments') ?>" enctype="multipart/form-data">
                 <?= csrf_field() ?>
 
                 <div class="form-group">
@@ -18,6 +18,12 @@
                 <div class="form-group">
                     <label class="form-label">Deskripsi / Instruksi</label>
                     <textarea name="description" class="form-control" rows="5"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">File Lampiran (Opsional)</label>
+                    <input type="file" name="file" class="form-control">
+                    <small class="text-muted">PDF, Word, Excel, ZIP (Max 10MB)</small>
                 </div>
 
                 <div class="form-row">

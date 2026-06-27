@@ -6,6 +6,39 @@ try {
     $notifCount = $notifModel->countUnread($user['id'] ?? 0);
 } catch (\Throwable $e) {}
 ?>
+<style>
+    .dynamic-navbar {
+        pointer-events: auto; display: flex; justify-content: space-between; align-items: center; 
+        background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); 
+        padding: 8px 12px 8px 24px; border-radius: 999px; 
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.1); 
+        border: 1px solid rgba(255,255,255,0.1); width: 100%; max-width: 700px; 
+        transition: all 0.3s ease; position: relative;
+    }
+    .mobile-menu-toggle {
+        display: none;
+        background: transparent; border: none; color: white; cursor: pointer;
+        padding: 4px; margin-right: 12px;
+    }
+    @media (max-width: 768px) {
+        .dynamic-navbar {
+            padding: 8px 12px;
+            border-radius: 20px;
+        }
+        .mobile-menu-toggle {
+            display: block;
+        }
+        #global-search-input {
+            width: 100px !important;
+        }
+        #global-search-input:focus {
+            width: 150px !important;
+        }
+        .nav-divider {
+            display: none;
+        }
+    }
+</style>
 <div style="display: flex; justify-content: center; position: sticky; top: 0; z-index: 999; margin-bottom: 24px; padding: 16px 0; width: 100%; background: rgba(248, 250, 252, 0.8); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid rgba(0,0,0,0.05);">
 
 <?php
@@ -17,10 +50,13 @@ try {
     <!-- BRANDING LOGO MOVED TO SIDEBAR -->
 
     <!-- Floating Omnipresent Search & Notifications (Dynamic Island Style) -->
-    <div style="pointer-events: auto; display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); padding: 8px 12px 8px 24px; border-radius: 999px; box-shadow: 0 10px 30px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.1); width: 100%; max-width: 700px; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative;">
-        <form action="<?= url('/search') ?>" method="GET" style="display: flex; align-items: center; gap: 12px; flex: 1; margin:0;" id="global-search-form">
+    <div class="dynamic-navbar">
+        <button class="mobile-menu-toggle" onclick="document.body.classList.toggle('sidebar-open')">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <form action="<?= url('/search') ?>" method="GET" style="display: flex; align-items: center; gap: 8px; flex: 1; margin:0;" id="global-search-form">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: rgba(255,255,255,0.5);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" name="q" id="global-search-input" placeholder="Cari mata kuliah, nama mahasiswa..." style="border: none; background: transparent; width: 100%; font-size: 15px; font-weight: 500; outline: none; color: white; font-family: inherit;" autocomplete="off">
+            <input type="text" name="q" id="global-search-input" placeholder="Cari..." style="border: none; background: transparent; width: 100%; font-size: 15px; font-weight: 500; outline: none; color: white; font-family: inherit; transition: width 0.3s;" autocomplete="off">
         </form>
         
         <!-- Dropdown Hasil Pencarian -->
@@ -52,7 +88,7 @@ try {
             </a>
             <?php endif; ?>
 
-            <div style="width: 1px; height: 24px; background: var(--border-color);"></div>
+            <div class="nav-divider" style="width: 1px; height: 24px; background: var(--border-color);"></div>
 
             <a href="<?= url('/profile') ?>">
                 <img src="<?= !empty($user['avatar']) ? upload_url($user['avatar']) : 'https://ui-avatars.com/api/?name='.urlencode($user['name'] ?? 'U').'&background=6366f1&color=fff' ?>" alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 2px solid white; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">

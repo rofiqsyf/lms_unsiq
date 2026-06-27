@@ -27,8 +27,28 @@ class CalendarController extends BaseController
     /** GET /calendar/events */
     public function events(): void
     {
+        $events = $this->eventModel->getForCalendar();
+        
+        $role = \App\Core\Session::user('role');
+        if (in_array($role, ['mahasiswa', 'dosen'])) {
+            $assignmentModel = new \App\Models\Assignment();
+            $assignments = $assignmentModel->getForCalendar(\App\Core\Session::userId(), $role);
+            
+            foreach ($assignments as $a) {
+                $events[] = [
+                    'id' => 'tugas_' . $a['id'],
+                    'title' => 'Tenggat: ' . $a['title'] . ' (' . $a['course_name'] . ')',
+                    'start_date' => $a['start_date'],
+                    'end_date' => $a['end_date'],
+                    'event_type' => 'tugas',
+                    'color' => '#f59e0b', // Amber for assignments
+                    'className' => 'event-tugas'
+                ];
+            }
+        }
+
         header('Content-Type: application/json');
-        echo json_encode($this->eventModel->getForCalendar());
+        echo json_encode($events);
         exit;
     }
 

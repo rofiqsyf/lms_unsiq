@@ -31,7 +31,7 @@ class AssignmentController extends BaseController
         $data = $this->allInput();
         $this->validate($data, ['title' => 'required|min:3', 'deadline' => 'required', 'max_score' => 'required|numeric']);
 
-        $this->assignmentModel->create([
+        $assignmentData = [
             'course_id'     => $courseId,
             'title'         => $data['title'],
             'description'   => $data['description'] ?? '',
@@ -41,7 +41,18 @@ class AssignmentController extends BaseController
             'late_penalty'  => $data['late_penalty'] ?? 0,
             'file_required' => isset($data['file_required']) ? 1 : 0,
             'is_published'  => isset($data['is_published']) ? 1 : 0,
-        ]);
+        ];
+
+        if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
+            $uploader = new \App\Core\FileUploader('assignments');
+            $path = $uploader->upload('file');
+            if ($path) {
+                $assignmentData['file_path'] = $path;
+                $assignmentData['file_name'] = $_FILES['file']['name'];
+            }
+        }
+
+        $this->assignmentModel->create($assignmentData);
 
         flash_success('Tugas berhasil ditambahkan.');
         $this->redirect(url('/courses/' . $courseId));
@@ -80,7 +91,7 @@ class AssignmentController extends BaseController
 
         $this->validate($data, ['title' => 'required|min:3', 'deadline' => 'required', 'max_score' => 'required|numeric']);
 
-        $this->assignmentModel->update($id, [
+        $assignmentData = [
             'title'         => $data['title'],
             'description'   => $data['description'] ?? '',
             'max_score'     => (int) $data['max_score'],
@@ -89,7 +100,21 @@ class AssignmentController extends BaseController
             'late_penalty'  => $data['late_penalty'] ?? 0,
             'file_required' => isset($data['file_required']) ? 1 : 0,
             'is_published'  => isset($data['is_published']) ? 1 : 0,
-        ]);
+        ];
+
+        if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
+            $uploader = new \App\Core\FileUploader('assignments');
+            $path = $uploader->upload('file');
+            if ($path) {
+                $assignmentData['file_path'] = $path;
+                $assignmentData['file_name'] = $_FILES['file']['name'];
+            }
+        } elseif (isset($data['remove_file']) && $data['remove_file'] === '1') {
+            $assignmentData['file_path'] = null;
+            $assignmentData['file_name'] = null;
+        }
+
+        $this->assignmentModel->update($id, $assignmentData);
 
         flash_success('Tugas berhasil diperbarui.');
         $this->redirect(url('/assignments/' . $id));

@@ -17,7 +17,12 @@ LMS UNSIQ adalah sistem manajemen pembelajaran (Learning Management System) kela
   - **Tugas & Pengumpulan**: Sistem *deadline*, opsi toleransi terlambat, dan pengumpulan (upload file) dengan proses *grading* oleh dosen.
   - **Kuis / Ujian Online**: Ujian interaktif, opsi acak soal, skor minimal (KKM), batas durasi dengan fitur auto-submit.
   - **Rekap Nilai (Grades)**: Mahasiswa dapat melihat histori nilai, dosen dapat merekap per kelas.
-- **Fitur Tambahan**:
+- **Fitur Tambahan (Eksklusif Terbaru)**:
+  - **Pencarian Cerdas (Live Search)**: Kotak pencarian dinamis (AJAX/JS) untuk rekomendasi mata kuliah di Navbar dan pencarian mahasiswa di halaman penilaian Dosen.
+  - **Live Chat Global**: Sistem pesan *real-time* dengan antarmuka *bubble chat* modern untuk mengirim pesan ke semua sivitas akademika (Mahasiswa, Dosen, Admin).
+  - **Kalender Akademik Terintegrasi**: Menggabungkan agenda universitas (buatan Admin) dan tenggat waktu tugas kelas secara otomatis, dilengkapi fitur *filter view*.
+  - **Gamification Mahasiswa (Bento Grid)**: Dashboard khusus Mahasiswa dengan layout Bento UI, metrik "waktu belajar", dan sistem poin XP untuk meningkatkan retensi belajar.
+  - **Manajemen Lampiran (Dosen)**: Dosen memiliki kapabilitas mengunggah file lampiran (PDF/Docs) beserta soal untuk diunduh mahasiswa.
   - Profil Pengguna (Upload Foto).
   - Pengumuman (Sematkan/Pin Pengumuman per Mata Kuliah atau Umum).
   - Notifikasi *Real-Time*.
@@ -42,10 +47,11 @@ LMS UNSIQ adalah sistem manajemen pembelajaran (Learning Management System) kela
    - Akun Dosen: `dosen1@lms.unsiq.ac.id` | Password: `password`
    - Akun Mahasiswa: `mhs1@lms.unsiq.ac.id` | Password: `password`
 
-## 🎨 UI/UX Design
+## 🎨 UI/UX Design & Responsiveness
 
-LMS UNSIQ menggunakan sistem desain terpusat (CSS Variables) dengan *theme* gelap yang elegan.
-Komponen didesain sepenuhnya *responsive*, mengusung konsep mikro interaksi (*micro-interactions*), status *badges*, *smooth pagination*, *alerts*, dan *modals*.
+LMS UNSIQ menggunakan sistem desain terpusat (CSS Variables) dengan *theme* bergaya modern *glassmorphism* dan *bento grids*.
+Komponen didesain sepenuhnya **100% responsive cross-device** (Desktop, Tablet, Smartphone) dengan Media Queries yang beradaptasi dengan *fluid*. 
+Aplikasi mengusung konsep mikro interaksi (*micro-interactions*), status *badges*, navigasi *dual-sidebar* dinamis, *smooth pagination*, *alerts*, dan *modals*.
 
 ---
-Dikembangkan sebagai bagian dari Tugas Akhir berskala Enterprise untuk membuktikan keandalan PHP Native berstandar tinggi.
+Dikembangkan sebagai bagian dari sistem skala Enterprise untuk membuktikan keandalan PHP Native berstandar industri modern.

@@ -23,6 +23,19 @@
             <div class="card-body">
                 <h3 class="mb-3">Instruksi Tugas</h3>
                 <div style="line-height:1.7;"><?= nl2br(e($assignment['description'])) ?: '<em>Tidak ada deskripsi tambahan.</em>' ?></div>
+                
+                <?php if (!empty($assignment['file_path'])): ?>
+                    <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border-color);">
+                        <h4 style="font-size:14px; margin-bottom:12px; color:var(--text-secondary);">Lampiran Soal/Materi</h4>
+                        <a href="<?= upload_url($assignment['file_path']) ?>" target="_blank" style="display:inline-flex; align-items:center; gap:8px; padding:10px 16px; background:var(--bg-secondary); border:1px solid var(--border-color); border-radius:12px; text-decoration:none; color:var(--text-primary); transition:all 0.2s;" onmouseover="this.style.borderColor='var(--accent-primary)'; this.style.color='var(--accent-primary)';" onmouseout="this.style.borderColor='var(--border-color)'; this.style.color='var(--text-primary)';">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            <div style="display:flex; flex-direction:column; align-items:flex-start;">
+                                <strong style="font-size:14px; line-height:1.2;"><?= e($assignment['file_name']) ?></strong>
+                                <span style="font-size:11px; color:var(--text-tertiary);">Klik untuk mengunduh</span>
+                            </div>
+                        </a>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -83,7 +96,13 @@
             <div class="card">
                 <div class="card-header d-flex justify-between align-center">
                     <h3>Daftar Pengumpulan</h3>
-                    <span class="badge badge-secondary"><?= count($submissions) ?> Terkumpul</span>
+                    <div class="d-flex align-center gap-3">
+                        <div style="position:relative;">
+                            <svg style="position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--text-tertiary);" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <input type="text" id="searchSubmission" placeholder="Cari mahasiswa/NIM..." class="form-control form-control-sm" style="padding-left:32px; border-radius:20px; width:220px;">
+                        </div>
+                        <span class="badge badge-secondary"><?= count($submissions) ?> Terkumpul</span>
+                    </div>
                 </div>
                 <div class="card-body" style="padding:0;">
                     <?php if (empty($submissions)): ?>
@@ -92,13 +111,13 @@
                         <div class="table-wrapper">
                             <table class="table">
                                 <thead><tr><th>Mahasiswa</th><th>Waktu Kumpul</th><th>Status</th><th>File</th><th>Nilai</th><th>Aksi</th></tr></thead>
-                                <tbody>
+                                <tbody id="submissionTableBody">
                                     <?php foreach ($submissions as $sub): ?>
                                     <tr>
                                         <td>
                                             <div class="d-flex align-center gap-2">
                                                 <div class="user-avatar" style="width:28px;height:28px;"><span class="avatar-initial" style="font-size:10px"><?= strtoupper(substr($sub['student_name'],0,1)) ?></span></div>
-                                                <div><strong><?= e($sub['student_name']) ?></strong><div class="text-xs text-muted"><?= e($sub['nim_nidn']) ?></div></div>
+                                                <div><strong class="student-name"><?= e($sub['student_name']) ?></strong><div class="text-xs text-muted student-nim"><?= e($sub['nim_nidn']) ?></div></div>
                                             </div>
                                         </td>
                                         <td class="text-sm <?= strtotime($sub['submitted_at']) > strtotime($assignment['deadline']) ? 'text-danger' : '' ?>"><?= format_date($sub['submitted_at'], 'd M H:i') ?></td>
@@ -150,15 +169,39 @@
             </div>
 
             <script>
-                function openGradeModal(id, name, score, feedback) {
-                    document.getElementById('gradeForm').action = '<?= url("/submissions/") ?>' + id + '/grade';
-                    document.getElementById('gradeStudentName').textContent = name;
-                    document.getElementById('gradeScore').value = score;
-                    document.getElementById('gradeFeedback').value = feedback;
-                    document.getElementById('gradeModal').classList.add('show');
+                function openGradeModal(id, studentName, currentScore, currentFeedback) {
+                    document.getElementById('gradeForm').action = '<?= url('/submissions/') ?>' + id + '/grade';
+                    document.getElementById('gradeStudentName').innerText = studentName;
+                    document.getElementById('gradeScore').value = currentScore !== '' ? currentScore : '';
+                    document.getElementById('gradeFeedback').value = currentFeedback !== '' ? currentFeedback : '';
+                    document.getElementById('gradeModal').classList.add('active');
                 }
+                
                 function closeGradeModal() {
-                    document.getElementById('gradeModal').classList.remove('show');
+                    document.getElementById('gradeModal').classList.remove('active');
+                }
+
+                // Live Search for Submissions
+                const searchInput = document.getElementById('searchSubmission');
+                if (searchInput) {
+                    searchInput.addEventListener('input', function(e) {
+                        const query = e.target.value.toLowerCase();
+                        const rows = document.querySelectorAll('#submissionTableBody tr');
+                        
+                        rows.forEach(row => {
+                            const nameCell = row.querySelector('.student-name');
+                            const nimCell = row.querySelector('.student-nim');
+                            if (nameCell && nimCell) {
+                                const name = nameCell.innerText.toLowerCase();
+                                const nim = nimCell.innerText.toLowerCase();
+                                if (name.includes(query) || nim.includes(query)) {
+                                    row.style.display = '';
+                                } else {
+                                    row.style.display = 'none';
+                                }
+                            }
+                        });
+                    });
                 }
             </script>
         <?php endif; ?>

@@ -9,7 +9,8 @@ class Assignment extends BaseModel
     protected string $table = 'assignments';
     protected array $fillable = [
         'course_id', 'title', 'description', 'max_score',
-        'deadline', 'allow_late', 'late_penalty', 'file_required', 'is_published'
+        'deadline', 'allow_late', 'late_penalty', 'file_required', 'is_published',
+        'file_path', 'file_name'
     ];
 
     /**
@@ -64,5 +65,27 @@ class Assignment extends BaseModel
                 WHERE a.course_id = ? AND a.is_published = 1
                 ORDER BY a.deadline ASC";
         return $this->db->query($sql, [$userId, $courseId])->fetchAll();
+    }
+
+    /**
+     * Get assignment deadlines for calendar
+     */
+    public function getForCalendar(int $userId, string $role): array
+    {
+        if ($role === 'mahasiswa') {
+            $sql = "SELECT a.id, a.title, a.deadline as start_date, a.deadline as end_date, 'tugas' as event_type, c.name as course_name 
+                    FROM assignments a
+                    JOIN enrollments e ON e.course_id = a.course_id
+                    JOIN courses c ON c.id = a.course_id
+                    WHERE e.user_id = ? AND e.status = 'active' AND a.is_published = 1";
+            return $this->db->query($sql, [$userId])->fetchAll();
+        } elseif ($role === 'dosen') {
+            $sql = "SELECT a.id, a.title, a.deadline as start_date, a.deadline as end_date, 'tugas' as event_type, c.name as course_name
+                    FROM assignments a
+                    JOIN courses c ON c.id = a.course_id
+                    WHERE c.dosen_id = ?";
+            return $this->db->query($sql, [$userId])->fetchAll();
+        }
+        return [];
     }
 }

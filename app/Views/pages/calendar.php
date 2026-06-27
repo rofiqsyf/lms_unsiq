@@ -5,7 +5,20 @@
             <h1>Kalender Akademik</h1>
             <p class="text-muted">Agenda kegiatan akademik kampus.</p>
         </div>
+        <div class="calendar-filters d-flex gap-2">
+            <button class="btn btn-sm btn-primary filter-btn active" data-filter="all">Semua Agenda</button>
+            <button class="btn btn-sm btn-outline filter-btn" data-filter="kampus">Agenda Kampus</button>
+            <?php if (has_role('mahasiswa', 'dosen')): ?>
+                <button class="btn btn-sm btn-outline filter-btn" data-filter="tugas">Tenggat Tugas</button>
+            <?php endif; ?>
+        </div>
     </div>
+
+    <style>
+        /* CSS based event filtering */
+        .fc-view-harness.hide-kampus .fc-event:not(.event-tugas) { display: none !important; }
+        .fc-view-harness.hide-tugas .event-tugas { display: none !important; }
+    </style>
 
     <!-- Include FullCalendar CSS -->
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
@@ -174,6 +187,32 @@
         });
         
         calendar.render();
+
+        // Filter Logic
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const harness = document.querySelector('.fc-view-harness');
+        
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                filterBtns.forEach(b => {
+                    b.classList.remove('btn-primary', 'active');
+                    b.classList.add('btn-outline');
+                });
+                this.classList.remove('btn-outline');
+                this.classList.add('btn-primary', 'active');
+                
+                const filter = this.getAttribute('data-filter');
+                if (filter === 'all') {
+                    harness.classList.remove('hide-kampus', 'hide-tugas');
+                } else if (filter === 'kampus') {
+                    harness.classList.remove('hide-kampus');
+                    harness.classList.add('hide-tugas');
+                } else if (filter === 'tugas') {
+                    harness.classList.remove('hide-tugas');
+                    harness.classList.add('hide-kampus');
+                }
+            });
+        });
     });
     
     function closeModal() {

@@ -7,7 +7,7 @@
 
     <div class="card" style="max-width:800px;">
         <div class="card-body">
-            <form method="POST" action="<?= url('/assignments/' . $assignment['id'] . '/update') ?>">
+            <form method="POST" action="<?= url('/assignments/' . $assignment['id'] . '/update') ?>" enctype="multipart/form-data">
                 <?= csrf_field() ?>
 
                 <div class="form-group">
@@ -18,6 +18,21 @@
                 <div class="form-group">
                     <label class="form-label">Deskripsi / Instruksi</label>
                     <textarea name="description" class="form-control" rows="5"><?= e($assignment['description']) ?></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">File Lampiran</label>
+                    <?php if (!empty($assignment['file_path'])): ?>
+                        <div style="margin-bottom: 8px; padding: 8px; border: 1px solid var(--border-color); border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; background: var(--bg-secondary);">
+                            <a href="<?= upload_url($assignment['file_path']) ?>" target="_blank" class="text-primary text-sm font-bold"><?= e($assignment['file_name']) ?></a>
+                            <label style="margin: 0; display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text-tertiary); cursor: pointer;">
+                                <input type="checkbox" name="remove_file" value="1"> Hapus file ini
+                            </label>
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-tertiary); margin-bottom: 4px;">Atau unggah file baru untuk menggantinya:</div>
+                    <?php endif; ?>
+                    <input type="file" name="file" class="form-control">
+                    <small class="text-muted">PDF, Word, Excel, ZIP (Max 10MB)</small>
                 </div>
 
                 <div class="form-row">

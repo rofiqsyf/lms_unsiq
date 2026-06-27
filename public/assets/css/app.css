@@ -1398,16 +1398,18 @@ select.form-control {
 }
 
 @media (max-width: 768px) {
-    .sidebar {
-        transform: translateX(-100%);
-        width: var(--sidebar-width);
+    .dual-sidebar {
+        width: 72px;
+        min-width: 72px;
+        position: sticky;
         z-index: 200;
     }
-
-    body.sidebar-open .sidebar { transform: translateX(0); }
-
-    .main-content { margin-left: 0; }
-    body.sidebar-collapsed .main-content { margin-left: 0; }
+    .sidebar-submenu {
+        display: none;
+    }
+    .main-content { margin-left: 0; min-width: 0; }
+    body.sidebar-open .dual-sidebar { width: 322px; }
+    body.sidebar-open .sidebar-submenu { display: flex; }
 
     .mobile-menu-btn { display: flex; }
 
