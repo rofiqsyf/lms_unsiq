@@ -1,0 +1,21 @@
+{
+  "name": "LMS UNSIQ - Portal Akademik",
+  "short_name": "LMS UNSIQ",
+  "description": "Learning Management System Universitas Sains Al-Qur'an",
+  "start_url": "/project_lms/dashboard",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "public/assets/images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "public/assets/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

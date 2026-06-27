@@ -1,0 +1,35 @@
+# LMS UNSIQ
+# ===========================================
+
+# Environment
+.env
+
+# Dependencies
+/vendor/
+
+# Storage (runtime files)
+/storage/logs/*
+/storage/cache/*
+/storage/uploads/*
+!storage/logs/.gitkeep
+!storage/cache/.gitkeep
+!storage/uploads/.gitkeep
+!storage/uploads/avatars/.gitkeep
+!storage/uploads/materials/.gitkeep
+!storage/uploads/submissions/.gitkeep
+!storage/uploads/courses/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Project reference docs
+project lms.md

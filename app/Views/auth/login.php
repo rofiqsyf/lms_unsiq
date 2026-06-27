@@ -1,0 +1,140 @@
+<?php
+use App\Core\Session;
+use App\Core\CSRF;
+
+$settingModel = new \App\Models\Setting();
+$siteName = $settingModel->getValue('site_name', APP_NAME);
+$siteLogo = $settingModel->getValue('site_logo');
+?>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Login ke <?= e($siteName) ?> - Sistem Manajemen Pembelajaran">
+    <title>Login — <?= e($siteName) ?></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= asset('css/app.css') ?>">
+    <link rel="stylesheet" href="<?= asset('css/auth.css?v=' . time()) ?>">
+</head>
+<body>
+    <div class="login-page">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="login-logo">
+                        <?php if (!empty($siteLogo)): ?>
+                            <img src="<?= e(str_starts_with($siteLogo, 'http') ? $siteLogo : upload_url($siteLogo)) ?>" 
+                                 alt="<?= e($siteName) ?> Logo" 
+                                 style="height: 48px; object-fit: contain;"
+                                 onerror="this.style.display='none'; document.getElementById('fallback-logo').style.display='flex';">
+                        <?php endif; ?>
+                        
+                        <div id="fallback-logo" class="login-logo-icon" style="display: <?= !empty($siteLogo) ? 'none' : 'flex' ?>;">
+                            <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+                                <path d="M8 24L16 8L24 24H8Z" fill="white" opacity="0.95"/>
+                            </svg>
+                        </div>
+                        <span class="login-logo-text"><?= e($siteName) ?></span>
+                    </div>
+                    <h1>Selamat Datang</h1>
+                    <p>Masuk ke akun Anda untuk melanjutkan</p>
+                </div>
+
+                <?php if (!empty($flashMessages['error'])): ?>
+                    <?php foreach ($flashMessages['error'] as $msg): ?>
+                        <div class="login-alert login-alert-error">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                            <?= e($msg) ?>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+
+                <?php if (!empty($flashMessages['success'])): ?>
+                    <?php foreach ($flashMessages['success'] as $msg): ?>
+                        <div class="login-alert login-alert-success">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            <?= e($msg) ?>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+
+                <form class="login-form" method="POST" action="<?= url('/login') ?>">
+                    <?= csrf_field() ?>
+
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email</label>
+                        <div class="input-wrapper">
+                            <input type="email"
+                                   id="email"
+                                   name="email"
+                                   class="form-control"
+                                   placeholder="nama@lms.unsiq.ac.id"
+                                   value="<?= e(old('email')) ?>"
+                                   required
+                                   autofocus>
+                            <span class="input-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password</label>
+                        <div class="input-wrapper">
+                            <input type="password"
+                                   id="password"
+                                   name="password"
+                                   class="form-control"
+                                   placeholder="Masukkan password"
+                                   required>
+                            <span class="input-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                            </span>
+                            <button type="button" class="password-toggle" onclick="togglePassword()" aria-label="Toggle password">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="eyeIcon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-between align-center mt-2 mb-4">
+                        <label class="form-check" style="margin:0;">
+                            <input type="checkbox" name="remember"> Ingat Saya
+                        </label>
+                        <a href="<?= url('/forgot-password') ?>" class="text-sm text-primary text-decoration-none">Lupa Password?</a>
+                    </div>
+
+                    <button type="submit" class="login-btn">
+                        Masuk
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:4px"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </button>
+                    
+                    <div class="text-center mt-4 text-sm">
+                        Belum punya akun? <a href="<?= url('/register') ?>" class="text-primary font-medium text-decoration-none">Daftar sekarang</a>
+                    </div>
+                </form>
+
+                <div class="login-footer">
+                    <p>&copy; <?= date('Y') ?> <?= APP_NAME ?> — FASTIKOM UNSIQ</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const input = document.getElementById('password');
+            const icon = document.getElementById('eyeIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+            } else {
+                input.type = 'password';
+                icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+            }
+        }
+    </script>
+</body>
+</html>

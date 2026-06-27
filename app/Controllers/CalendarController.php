@@ -1,0 +1,74 @@
+<?php
+namespace App\Controllers;
+
+use App\Models\AcademicEvent;
+use App\Core\Logger;
+
+class CalendarController extends BaseController
+{
+    private AcademicEvent $eventModel;
+
+    public function __construct()
+    {
+        $this->eventModel = new AcademicEvent();
+    }
+
+    /** GET /calendar */
+    public function index(): void
+    {
+        $this->setTitle('Kalender Akademik');
+        $this->setBreadcrumbs([['label' => 'Dashboard', 'url' => '/dashboard'], ['label' => 'Kalender Akademik']]);
+        
+        $this->render('pages/calendar', [
+            'pageTitle' => 'Kalender Akademik'
+        ]);
+    }
+
+    /** GET /calendar/events */
+    public function events(): void
+    {
+        header('Content-Type: application/json');
+        echo json_encode($this->eventModel->getForCalendar());
+        exit;
+    }
+
+    /** POST /calendar/events */
+    public function store(): void
+    {
+        $this->validateCSRF();
+        if (!has_role('admin')) { $this->back(); return; }
+
+        $data = $this->allInput();
+        $this->validate($data, [
+            'title'      => 'required',
+            'start_date' => 'required',
+            'end_date'   => 'required',
+            'event_type' => 'required'
+        ]);
+
+        $this->eventModel->create([
+            'title'       => $data['title'],
+            'start_date'  => $data['start_date'],
+            'end_date'    => $data['end_date'],
+            'event_type'  => $data['event_type'],
+            'description' => $data['description'] ?? ''
+        ]);
+
+        Logger::log('create_event', 'calendar', null, 'Membuat agenda: ' . $data['title']);
+        flash_success('Agenda berhasil ditambahkan.');
+        $this->redirect(url('/calendar'));
+    }
+
+    /** POST /calendar/events/{id}/delete */
+    public function destroy(int $id): void
+    {
+        $this->validateCSRF();
+        if (!has_role('admin')) { $this->back(); return; }
+
+        $this->eventModel->delete($id);
+        Logger::log('delete_event', 'calendar', $id, 'Menghapus agenda kalender');
+        
+        flash_success('Agenda berhasil dihapus.');
+        $this->redirect(url('/calendar'));
+    }
+}

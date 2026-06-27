@@ -1,0 +1,206 @@
+/* ===========================================
+ * LMS UNSIQ - Dashboard Specific Styles
+ * =========================================== */
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+/* Welcome Banner */
+.welcome-banner {
+    background: var(--gradient-primary);
+    border-radius: var(--border-radius-lg);
+    padding: 32px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome-banner::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 300px;
+    height: 300px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+}
+
+.welcome-banner h2 {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
+    color: #ffffff;
+}
+
+.welcome-banner p {
+    font-size: var(--font-size-base);
+    opacity: 0.9;
+    position: relative;
+    z-index: 1;
+    color: #ffffff;
+}
+
+/* Dashboard Grid Layout */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+}
+
+.dashboard-grid-full {
+    grid-column: 1 / -1;
+}
+
+/* Activity List */
+.activity-list { list-style: none; }
+
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.activity-item:last-child { border-bottom: none; }
+
+.activity-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.activity-icon.icon-assignment { background: rgba(99, 102, 241, 0.12); color: var(--accent-primary); }
+.activity-icon.icon-quiz { background: rgba(245, 158, 11, 0.12); color: var(--accent-warning); }
+.activity-icon.icon-grade { background: rgba(16, 185, 129, 0.12); color: var(--accent-success); }
+.activity-icon.icon-announcement { background: rgba(59, 130, 246, 0.12); color: var(--accent-info); }
+
+.activity-content { flex: 1; min-width: 0; }
+.activity-content p { font-size: var(--font-size-sm); color: var(--text-primary); margin-bottom: 2px; }
+.activity-content p strong { font-weight: 600; }
+.activity-time { font-size: var(--font-size-xs); color: var(--text-tertiary); }
+
+/* Course Mini Card (Dashboard) */
+.course-mini-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    transition: all var(--transition-fast);
+    margin-bottom: 12px;
+}
+
+.course-mini-card:last-child { margin-bottom: 0; }
+
+.course-mini-card:hover {
+    border-color: var(--glass-border-hover);
+    background: var(--bg-quaternary);
+}
+
+.course-mini-card a { color: var(--text-primary); }
+.course-mini-card a:hover { color: var(--accent-primary); }
+
+.course-mini-img {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--border-radius);
+    background: var(--gradient-primary);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: white;
+    overflow: hidden;
+}
+
+.course-mini-img img { width: 100%; height: 100%; object-fit: cover; }
+
+.course-mini-info { flex: 1; min-width: 0; }
+
+.course-mini-info h4 {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.course-mini-info p {
+    font-size: var(--font-size-xs);
+    color: var(--text-tertiary);
+}
+
+.course-mini-progress { width: 80px; text-align: right; }
+.course-mini-progress .progress-value {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--accent-primary);
+    margin-bottom: 4px;
+}
+
+/* Deadline Card */
+.deadline-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.deadline-item:last-child { border-bottom: none; }
+
+.deadline-date {
+    text-align: center;
+    min-width: 48px;
+    padding: 6px;
+    background: var(--glass-bg);
+    border-radius: var(--border-radius-sm);
+}
+
+.deadline-date .day { display: block; font-size: var(--font-size-xl); font-weight: 700; color: var(--accent-primary); line-height: 1.2; }
+.deadline-date .month { display: block; font-size: var(--font-size-xs); color: var(--text-tertiary); text-transform: uppercase; }
+
+.deadline-info { flex: 1; }
+.deadline-info h4 { font-size: var(--font-size-sm); font-weight: 600; margin-bottom: 2px; }
+.deadline-info p { font-size: var(--font-size-xs); color: var(--text-tertiary); }
+
+/* Chart Container */
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 240px;
+    padding: 16px 0;
+}
+
+.chart-container canvas { width: 100% !important; height: 100% !important; }
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 992px) {
+    .dashboard-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+    .stats-grid { grid-template-columns: 1fr; }
+}

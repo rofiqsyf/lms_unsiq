@@ -1,0 +1,46 @@
+# public/.htaccess
+# URL Rewriting untuk Apache mod_rewrite
+# Semua request diarahkan ke Front Controller (index.php)
+
+<IfModule mod_rewrite.c>
+    # Aktifkan rewrite engine
+    RewriteEngine On
+
+    # Set base URL — sesuaikan jika di subdirektori
+    # Untuk XAMPP: /project_lms/public/
+    RewriteBase /project_lms/public/
+
+    # Jika request adalah file/directory yang SUDAH ada, serve langsung
+    # (CSS, JS, images, fonts tidak di-redirect)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Selain itu, redirect semua request ke index.php
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>
+
+# Keamanan: Blokir akses ke file hidden (.env, .git, dll)
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Disable directory listing
+Options -Indexes
+
+# Caching untuk static assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    ExpiresByType font/woff2 "access plus 1 month"
+</IfModule>
+
+# GZIP Compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json
+</IfModule>
