@@ -9,6 +9,7 @@ use App\Models\Submission;
 use App\Models\Quiz;
 use App\Models\Announcement;
 use App\Models\Notification;
+use App\Models\AcademicEvent;
 use App\Core\Session;
 
 /**
@@ -48,9 +49,11 @@ class DashboardController extends BaseController
         $courseModel = new Course();
         $enrollmentModel = new Enrollment();
         $announcementModel = new Announcement();
+        $academicEventModel = new AcademicEvent();
 
         $data = [
             'pageTitle'     => 'Admin Dashboard',
+            'upcomingEvents'=> $academicEventModel->getUpcomingEvents(3),
             'totalUsers'    => $userModel->count(),
             'totalDosen'    => $userModel->countByRole('dosen'),
             'totalMahasiswa'=> $userModel->countByRole('mahasiswa'),
@@ -80,9 +83,11 @@ class DashboardController extends BaseController
         $courseModel = new Course();
         $submissionModel = new Submission();
         $announcementModel = new Announcement();
+        $academicEventModel = new AcademicEvent();
 
         $data = [
             'pageTitle'       => 'Dosen Dashboard',
+            'upcomingEvents'  => $academicEventModel->getUpcomingEvents(3),
             'myCourses'       => $courseModel->getByDosen($userId),
             'totalMyCourses'  => $courseModel->count('dosen_id = ?', [$userId]),
             'totalStudents'   => $courseModel->getTotalStudentsByDosen($userId),
@@ -103,9 +108,11 @@ class DashboardController extends BaseController
         $assignmentModel = new Assignment();
         $announcementModel = new Announcement();
         $notificationModel = new Notification();
+        $academicEventModel = new AcademicEvent();
 
         $data = [
             'pageTitle'         => 'Mahasiswa Dashboard',
+            'upcomingEvents'    => $academicEventModel->getUpcomingEvents(3),
             'enrolledCourses'   => $enrollmentModel->getEnrolledCourses($userId),
             'totalEnrolled'     => $enrollmentModel->count('user_id = ?', [$userId]),
             'upcomingDeadlines' => $assignmentModel->getUpcomingDeadlines($userId, 5),

@@ -53,15 +53,23 @@
                                 <label class="form-label">Catatan Pengumpulan (Opsional)</label>
                                 <textarea name="content" class="form-control" rows="3"><?= $mySubmission ? e($mySubmission['content']) : '' ?></textarea>
                             </div>
-                            <?php if ($assignment['file_required']): ?>
-                                <div class="form-group">
-                                    <label class="form-label">Upload File Tugas <span class="required">*</span></label>
-                                    <?php if ($mySubmission && $mySubmission['file_path']): ?>
-                                        <div class="mb-2 text-sm text-muted">File saat ini: <?= e($mySubmission['file_name']) ?></div>
-                                    <?php endif; ?>
-                                    <input type="file" name="file" class="form-control" <?= $mySubmission ? '' : 'required' ?>>
-                                </div>
-                            <?php endif; ?>
+                            <div class="form-group">
+                                <label class="form-label">Upload File Tugas <?= $assignment['file_required'] ? '<span class="required">*</span>' : '<span class="text-muted text-sm">(Opsional)</span>' ?></label>
+                                <?php if ($mySubmission && $mySubmission['file_path']): ?>
+                                    <div class="mb-2 text-sm text-muted">File saat ini: <?= e($mySubmission['file_name']) ?></div>
+                                <?php endif; ?>
+                                
+                                <label class="file-upload-wrapper" style="display: flex; align-items: center; gap: 16px; background: var(--bg-secondary); border: 2px dashed var(--border-color); padding: 16px 20px; border-radius: 16px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='var(--accent-primary)'; this.style.background='var(--bg-tertiary)';" onmouseout="this.style.borderColor='var(--border-color)'; this.style.background='var(--bg-secondary)';">
+                                    <div style="width: 48px; height: 48px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--accent-primary); box-shadow: 0 4px 12px rgba(0,0,0,0.05); flex-shrink: 0;">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: 700; color: var(--text-primary); font-size: 15px;">Klik untuk memilih file...</div>
+                                        <div style="font-size: 13px; color: var(--text-tertiary); margin-top: 4px;" id="file-name-display">Maksimal 10MB (PDF, DOCX, ZIP, dll)</div>
+                                    </div>
+                                    <input type="file" name="file" id="assignment-file" style="display: none;" <?= ($assignment['file_required'] && !$mySubmission) ? 'required' : '' ?> onchange="document.getElementById('file-name-display').innerText = this.files[0] ? this.files[0].name : 'Maksimal 10MB (PDF, DOCX, ZIP, dll)'; document.getElementById('file-name-display').style.color = 'var(--accent-primary)'; document.getElementById('file-name-display').style.fontWeight = '600';">
+                                </label>
+                            </div>
                             <button type="submit" class="btn btn-primary mt-2"><?= $mySubmission ? 'Update Pengumpulan' : 'Kumpulkan Tugas' ?></button>
                         </form>
                     <?php elseif (!$canSubmit): ?>

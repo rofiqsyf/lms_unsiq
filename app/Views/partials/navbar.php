@@ -6,35 +6,27 @@ try {
     $notifCount = $notifModel->countUnread($user['id'] ?? 0);
 } catch (\Throwable $e) {}
 ?>
-<div style="display: flex; justify-content: center; position: sticky; top: 24px; z-index: 999; margin-bottom: 24px; pointer-events: none; width: 100%;">
-    
+<div style="display: flex; justify-content: center; position: sticky; top: 0; z-index: 999; margin-bottom: 24px; padding: 16px 0; width: 100%; background: rgba(248, 250, 252, 0.8); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid rgba(0,0,0,0.05);">
+
 <?php
     $settingModel = new \App\Models\Setting();
     $siteName = $settingModel->getValue('site_name', 'LMS UNSIQ');
     $siteDesc = $settingModel->getValue('site_description', 'Portal Akademik');
     $siteLogo = $settingModel->getValue('site_logo');
 ?>
-    <!-- BRANDING LOGO (Top Left) -->
-    <a href="<?= url('/dashboard') ?>" style="position: absolute; left: 32px; top: 50%; transform: translateY(-50%); pointer-events: auto; display: flex; align-items: center; gap: 12px; text-decoration: none; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-50%) scale(1.02)'" onmouseout="this.style.transform='translateY(-50%) scale(1)'">
-        <?php if (!empty($siteLogo)): ?>
-            <img src="<?= e(str_starts_with($siteLogo, 'http') ? $siteLogo : upload_url($siteLogo)) ?>" alt="Logo" style="width: 40px; height: 40px; border-radius: 8px; object-fit: contain;">
-        <?php else: ?>
-            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #4f46e5, #4338ca); border-radius: 12px; display: flex; justify-content: center; align-items: center; box-shadow: 0 8px 16px rgba(67,56,202,0.25);">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-            </div>
-        <?php endif; ?>
-        <div>
-            <h1 style="font-size: 18px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; margin: 0; line-height: 1.1;"><?= e($siteName) ?></h1>
-            <span style="font-size: 11px; font-weight: 700; color: var(--accent-primary); letter-spacing: 0.05em; text-transform: uppercase;"><?= e($siteDesc) ?></span>
-        </div>
-    </a>
+    <!-- BRANDING LOGO MOVED TO SIDEBAR -->
 
     <!-- Floating Omnipresent Search & Notifications (Dynamic Island Style) -->
-    <div style="pointer-events: auto; display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); padding: 8px 12px 8px 24px; border-radius: 999px; box-shadow: 0 10px 30px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.1); width: 100%; max-width: 700px; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);">
-        <form action="<?= url('/search') ?>" method="GET" style="display: flex; align-items: center; gap: 12px; flex: 1; margin:0;">
+    <div style="pointer-events: auto; display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px); padding: 8px 12px 8px 24px; border-radius: 999px; box-shadow: 0 10px 30px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.1); width: 100%; max-width: 700px; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative;">
+        <form action="<?= url('/search') ?>" method="GET" style="display: flex; align-items: center; gap: 12px; flex: 1; margin:0;" id="global-search-form">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: rgba(255,255,255,0.5);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" name="q" placeholder="Cari mata kuliah, nama mahasiswa..." style="border: none; background: transparent; width: 100%; font-size: 15px; font-weight: 500; outline: none; color: white; font-family: inherit;" autocomplete="off">
+            <input type="text" name="q" id="global-search-input" placeholder="Cari mata kuliah, nama mahasiswa..." style="border: none; background: transparent; width: 100%; font-size: 15px; font-weight: 500; outline: none; color: white; font-family: inherit;" autocomplete="off">
         </form>
+        
+        <!-- Dropdown Hasil Pencarian -->
+        <div id="global-search-results" style="display: none; position: absolute; top: calc(100% + 12px); left: 0; right: 0; background: white; border-radius: 20px; padding: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); border: 1px solid var(--border-color); max-height: 400px; overflow-y: auto; z-index: 1000;">
+            <!-- Hasil di-render via JS -->
+        </div>
         <div style="display: flex; align-items: center; gap: 12px;">
             <?php
                 $msgCount = 0;
@@ -68,3 +60,108 @@ try {
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('global-search-input');
+    const searchResults = document.getElementById('global-search-results');
+    const baseUrl = '<?= rtrim(url('/'), '/') ?>';
+    let debounceTimer;
+
+    // Klik di luar dropdown akan menutup hasil pencarian
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.style.display = 'none';
+        }
+    });
+
+    // Ketika input difokuskan kembali
+    searchInput.addEventListener('focus', function() {
+        if (this.value.trim().length >= 2) {
+            searchResults.style.display = 'block';
+        }
+    });
+
+    searchInput.addEventListener('input', function() {
+        const query = this.value.trim();
+        
+        clearTimeout(debounceTimer);
+        
+        if (query.length < 2) {
+            searchResults.style.display = 'none';
+            return;
+        }
+
+        debounceTimer = setTimeout(() => {
+            searchResults.style.display = 'block';
+            searchResults.innerHTML = '<div style="padding:16px;text-align:center;color:#94a3b8;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spin"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="4.93" x2="19.07" y2="7.76"/></svg> Memuat...</div>';
+            
+            fetch(`${baseUrl}/search/ajax?q=${encodeURIComponent(query)}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                },
+                credentials: 'same-origin'
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error('Network response was not ok');
+                    return res.json();
+                })
+                .then(data => {
+                    let html = '';
+                    
+                    if (data.courses.length === 0 && data.users.length === 0) {
+                        html = `<div style="padding:16px;text-align:center;color:#64748b;">Tidak ada hasil untuk "<b>${query}</b>"</div>`;
+                    } else {
+                        // Render Courses
+                        if (data.courses.length > 0) {
+                            html += `<div style="font-size:12px;font-weight:700;color:#94a3b8;text-transform:uppercase;padding:8px 12px;margin-bottom:4px;">Mata Kuliah</div>`;
+                            data.courses.forEach(c => {
+                                html += `
+                                <a href="${baseUrl}/courses/${c.id}" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='var(--bg-secondary)'" onmouseout="this.style.background='transparent'">
+                                    <div style="width:40px;height:40px;border-radius:10px;background:var(--bg-tertiary);display:flex;align-items:center;justify-content:center;color:var(--text-secondary);font-weight:bold;">
+                                        ${c.name.substring(0,1).toUpperCase()}
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:600;color:var(--text-primary);font-size:14px;">${c.name}</div>
+                                        <div style="font-size:12px;color:var(--text-secondary);">${c.code} &bull; ${c.dosen_name || 'Tanpa Dosen'}</div>
+                                    </div>
+                                </a>`;
+                            });
+                        }
+                        
+                        // Render Users
+                        if (data.users.length > 0) {
+                            html += `<div style="font-size:12px;font-weight:700;color:#94a3b8;text-transform:uppercase;padding:8px 12px;margin-top:12px;margin-bottom:4px;border-top:1px solid var(--border-color);">Pengguna</div>`;
+                            data.users.forEach(u => {
+                                const avatarHtml = u.avatar 
+                                    ? `<img src="${u.avatar}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">`
+                                    : `<div style="width:40px;height:40px;border-radius:50%;background:var(--bg-tertiary);display:flex;align-items:center;justify-content:center;color:var(--text-secondary);font-weight:bold;">${u.name.substring(0,1).toUpperCase()}</div>`;
+                                
+                                html += `
+                                <a href="${baseUrl}/messages/${u.id}" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='var(--bg-secondary)'" onmouseout="this.style.background='transparent'">
+                                    ${avatarHtml}
+                                    <div>
+                                        <div style="font-weight:600;color:var(--text-primary);font-size:14px;">${u.name}</div>
+                                        <div style="font-size:12px;color:var(--text-secondary);"><span style="text-transform:capitalize;">${u.role}</span> &bull; ${u.nim_nidn || '-'}</div>
+                                    </div>
+                                </a>`;
+                            });
+                        }
+                        
+                        // Footer Link
+                        html += `
+                        <a href="${baseUrl}/search?q=${encodeURIComponent(query)}" style="display:block;text-align:center;padding:12px;margin-top:8px;border-top:1px solid var(--border-color);color:var(--accent-primary);font-weight:600;font-size:13px;text-decoration:none;background:var(--bg-secondary);border-radius:0 0 12px 12px;">
+                            Lihat semua hasil pencarian
+                        </a>`;
+                    }
+                    
+                    searchResults.innerHTML = html;
+                })
+                .catch(err => {
+                    searchResults.innerHTML = '<div style="padding:16px;text-align:center;color:#ef4444;">Gagal mengambil data.</div>';
+                });
+        }, 300); // 300ms debounce
+    });
+});
+</script>

@@ -41,22 +41,22 @@
         <?php endif; ?>
 
         <!-- BENTO 2: Streak & Gamification (Spans 1 col, 1 row) -->
-        <div class="bento-item" style="grid-column: span 1; grid-row: span 1; background: #fffbeb; border-radius: 32px; padding: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.02);">
+        <a href="<?= url('/gamification/streak') ?>" class="bento-item" style="grid-column: span 1; grid-row: span 1; background: #fffbeb; border-radius: 32px; padding: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.02); text-decoration: none; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
             <div style="background: #fef3c7; border-radius: 50%; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="#f59e0b" stroke="#d97706" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/></svg>
             </div>
             <div style="font-size: 32px; font-weight: 800; color: #d97706; line-height: 1;">3</div>
             <div style="font-size: 13px; font-weight: 600; color: #b45309; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px;">Hari Berturut-turut</div>
-        </div>
+        </a>
 
         <!-- BENTO 3: Points / Rewards (Spans 1 col, 1 row) -->
-        <div class="bento-item" style="grid-column: span 1; grid-row: span 1; background: #f0fdf4; border-radius: 32px; padding: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.02);">
+        <a href="<?= url('/gamification/rewards') ?>" class="bento-item" style="grid-column: span 1; grid-row: span 1; background: #f0fdf4; border-radius: 32px; padding: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.02); text-decoration: none; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
             <div style="background: #dcfce7; border-radius: 50%; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="#10b981" stroke="#059669" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             </div>
             <div style="font-size: 32px; font-weight: 800; color: #15803d; line-height: 1;">120</div>
             <div style="font-size: 13px; font-weight: 600; color: #166534; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px;">Poin XP</div>
-        </div>
+        </a>
 
         <!-- BENTO 6: Quick Actions (Spans 1 col, 1 row) -->
         <div class="bento-item" style="grid-column: span 1; grid-row: span 1; background: white; border-radius: 32px; padding: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.02); display: flex; flex-direction: column;">
@@ -74,14 +74,31 @@
         </div>
 
         <!-- BENTO 7: Announcements (Spans 1 col, 1 row) -->
-        <a href="<?= url('/announcements') ?>" class="bento-item" style="grid-column: span 1; grid-row: span 1; background: linear-gradient(135deg, #fdf4ff, #f3e8ff); border-radius: 32px; padding: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.02); display: flex; flex-direction: column; text-decoration: none; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+        <a href="<?= url('/calendar') ?>" class="bento-item" style="grid-column: span 1; grid-row: span 1; background: linear-gradient(135deg, #fdf4ff, #f3e8ff); border-radius: 32px; padding: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.02); display: flex; flex-direction: column; text-decoration: none; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"/></svg>
-                <h3 style="font-size: 14px; font-weight: 700; color: #7e22ce; margin: 0;">Pengumuman Kampus</h3>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <h3 style="font-size: 14px; font-weight: 700; color: #7e22ce; margin: 0;">Agenda Akademik Mendatang</h3>
             </div>
-            <div style="background: white; border-radius: 16px; padding: 12px; flex: 1; box-shadow: 0 2px 4px rgba(168, 85, 247, 0.1);">
-                <span style="font-size: 10px; font-weight: 700; color: #a855f7; text-transform: uppercase;">Hari Ini</span>
-                <p style="font-size: 13px; font-weight: 600; color: var(--text-primary); margin: 4px 0 0; line-height: 1.4;">Jadwal UAS Semester Genap telah dirilis.</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y: auto;">
+                <?php if (!empty($upcomingEvents)): ?>
+                    <?php foreach ($upcomingEvents as $evt): 
+                        $isToday = date('Y-m-d') === $evt['start_date'];
+                    ?>
+                        <div style="background: white; border-radius: 12px; padding: 10px; box-shadow: 0 2px 4px rgba(168, 85, 247, 0.1);">
+                            <span style="font-size: 10px; font-weight: 700; color: #a855f7; text-transform: uppercase;">
+                                <?= $isToday ? 'Hari Ini' : format_date($evt['start_date'], 'd M Y') ?>
+                            </span>
+                            <p style="font-size: 12px; font-weight: 600; color: var(--text-primary); margin: 2px 0 0; line-height: 1.3;">
+                                <?= e($evt['title']) ?>
+                            </p>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div style="background: white; border-radius: 16px; padding: 12px; flex: 1; box-shadow: 0 2px 4px rgba(168, 85, 247, 0.1); display: flex; align-items: center; justify-content: center;">
+                        <p style="font-size: 12px; font-weight: 500; color: var(--text-muted); text-align: center; margin: 0;">Tidak ada agenda terdekat.</p>
+                    </div>
+                <?php endif; ?>
             </div>
         </a>
 

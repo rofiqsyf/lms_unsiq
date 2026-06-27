@@ -71,10 +71,48 @@
         </div>
         <div class="card-body">
             <p id="modalDesc"></p>
-            <div id="deleteFormContainer" style="margin-top:20px;display:none;">
+            <div id="deleteFormContainer" style="margin-top:20px;display:none; justify-content: space-between; align-items: center;">
+                <button type="button" class="btn btn-primary btn-sm" id="btnEditEvent" onclick="toggleEditForm()">Edit Agenda</button>
                 <form id="deleteForm" method="POST" action="">
                     <?= csrf_field() ?>
                     <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Hapus agenda ini?')">Hapus Agenda</button>
+                </form>
+            </div>
+            
+            <div id="editFormContainer" style="display:none; margin-top:20px; padding-top:20px; border-top:1px solid var(--border-color);">
+                <form id="editForm" method="POST" action="">
+                    <?= csrf_field() ?>
+                    <div class="form-group">
+                        <label class="form-label">Judul Agenda</label>
+                        <input type="text" name="title" id="editTitle" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tipe</label>
+                        <select name="event_type" id="editType" class="form-control" required>
+                            <option value="perkuliahan">Perkuliahan</option>
+                            <option value="ujian">Ujian</option>
+                            <option value="libur">Libur</option>
+                            <option value="lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Tgl Mulai</label>
+                            <input type="date" name="start_date" id="editStart" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tgl Selesai</label>
+                            <input type="date" name="end_date" id="editEnd" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Keterangan</label>
+                        <textarea name="description" id="editDesc" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="d-flex justify-between">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleEditForm()">Batal</button>
+                        <button type="submit" class="btn btn-primary btn-sm">Simpan Perubahan</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -103,7 +141,32 @@
                 if (isAdmin) {
                     var deleteForm = document.getElementById('deleteForm');
                     deleteForm.action = '<?= url('/calendar/events/') ?>' + info.event.id + '/delete';
-                    document.getElementById('deleteFormContainer').style.display = 'block';
+                    
+                    var editForm = document.getElementById('editForm');
+                    editForm.action = '<?= url('/calendar/events/') ?>' + info.event.id + '/update';
+                    
+                    document.getElementById('editTitle').value = info.event.title;
+                    document.getElementById('editType').value = info.event.extendedProps.event_type || 'lainnya';
+                    
+                    // Format dates for inputs (YYYY-MM-DD)
+                    var startStr = info.event.startStr.split('T')[0];
+                    var endStr = info.event.endStr ? info.event.endStr.split('T')[0] : startStr;
+                    
+                    // FullCalendar exclusive end date means endStr is technically the day after visually
+                    // We need to subtract 1 day from end date for the form if it exists
+                    if (info.event.end) {
+                        var d = new Date(info.event.end);
+                        d.setDate(d.getDate() - 1);
+                        endStr = d.toISOString().split('T')[0];
+                    }
+                    
+                    document.getElementById('editStart').value = startStr;
+                    document.getElementById('editEnd').value = endStr;
+                    document.getElementById('editDesc').value = info.event.extendedProps.description || '';
+                    
+                    document.getElementById('deleteFormContainer').style.display = 'flex';
+                    document.getElementById('editFormContainer').style.display = 'none';
+                    document.getElementById('modalDesc').style.display = 'block';
                 }
                 
                 document.getElementById('eventModal').style.display = 'flex';
@@ -115,5 +178,21 @@
     
     function closeModal() {
         document.getElementById('eventModal').style.display = 'none';
+    }
+    
+    function toggleEditForm() {
+        var editContainer = document.getElementById('editFormContainer');
+        var descContainer = document.getElementById('modalDesc');
+        var btnEdit = document.getElementById('btnEditEvent');
+        
+        if (editContainer.style.display === 'none') {
+            editContainer.style.display = 'block';
+            descContainer.style.display = 'none';
+            btnEdit.style.display = 'none';
+        } else {
+            editContainer.style.display = 'none';
+            descContainer.style.display = 'block';
+            btnEdit.style.display = 'block';
+        }
     }
 </script>

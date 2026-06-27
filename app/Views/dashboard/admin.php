@@ -165,5 +165,35 @@
                 <?php endif; ?>
             </div>
         </div>
+
+        <!-- Upcoming Events -->
+        <div class="card" style="grid-column: 1 / -1;">
+            <div class="card-header">
+                <h3>📅 Agenda Akademik</h3>
+                <a href="<?= url('/calendar') ?>" class="btn btn-sm btn-secondary">Kalender</a>
+            </div>
+            <div class="card-body">
+                <?php if (!empty($upcomingEvents)): ?>
+                    <div style="display:flex;flex-direction:column;gap:12px;">
+                        <?php foreach ($upcomingEvents as $evt): 
+                            $isToday = date('Y-m-d') === $evt['start_date'];
+                        ?>
+                            <div style="display:flex;align-items:center;gap:16px;padding:12px;border:1px solid var(--border-color);border-radius:12px;background:var(--bg-primary);">
+                                <div style="width:48px;height:48px;background:var(--bg-secondary);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+                                    <span style="font-size:10px;font-weight:700;color:var(--accent-primary);text-transform:uppercase;"><?= date('M', strtotime($evt['start_date'])) ?></span>
+                                    <span style="font-size:16px;font-weight:800;color:var(--text-primary);line-height:1;"><?= date('d', strtotime($evt['start_date'])) ?></span>
+                                </div>
+                                <div style="flex:1;">
+                                    <h4 style="margin:0 0 4px 0;font-size:14px;color:var(--text-primary);"><?= e($evt['title']) ?></h4>
+                                    <span style="font-size:12px;color:var(--text-tertiary);"><?= $isToday ? '<strong style="color:var(--accent-danger);">Hari Ini</strong>' : format_date($evt['start_date'], 'd M Y') ?></span>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <div class="empty-state"><p>Tidak ada agenda akademik terdekat.</p></div>
+                <?php endif; ?>
+            </div>
+        </div>
     </div>
 </div>

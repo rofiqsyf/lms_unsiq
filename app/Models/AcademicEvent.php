@@ -40,4 +40,20 @@ class AcademicEvent extends BaseModel
         
         return $formatted;
     }
+    /**
+     * Get upcoming academic events for the dashboard
+     */
+    public function getUpcomingEvents(int $limit = 3): array
+    {
+        $sql = "SELECT * FROM {$this->table} 
+                WHERE end_date >= CURDATE() 
+                ORDER BY start_date ASC 
+                LIMIT ?";
+                
+        $stmt = $this->db->getConnection()->prepare($sql);
+        $stmt->bindValue(1, $limit, \PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetchAll();
+    }
 }

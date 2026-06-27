@@ -2,8 +2,11 @@
 <div class="animate-fade-in" style="display:flex;height:calc(100vh - 120px);gap:20px;">
     <!-- Sidebar Percakapan -->
     <div class="card" style="width:300px;display:flex;flex-direction:column;">
-        <div class="card-header" style="border-bottom:1px solid var(--border-color);padding:16px;">
+        <div class="card-header d-flex justify-between align-center" style="border-bottom:1px solid var(--border-color);padding:16px;">
             <h3 style="margin:0;">Pesan</h3>
+            <a href="<?= url('/messages/new') ?>" class="btn btn-sm btn-primary" style="padding:4px 8px; border-radius:8px;" title="Chat Baru">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            </a>
         </div>
         <div class="list-group" style="flex:1;overflow-y:auto;padding:0;">
             <?php foreach ($conversations as $conv): ?>
@@ -15,12 +18,12 @@
                             <span class="avatar-initial"><?= strtoupper(substr($conv['name'], 0, 1)) ?></span>
                         <?php endif; ?>
                         <?php if (!$conv['is_read'] && !$conv['is_mine']): ?>
-                            <div style="position:absolute;top:-2px;right:-2px;width:12px;height:12px;background:var(--danger-color);border-radius:50%;border:2px solid var(--card-bg);"></div>
+                            <div style="position:absolute;top:-2px;right:-2px;width:12px;height:12px;background:var(--accent-danger);border-radius:50%;border:2px solid var(--bg-secondary);"></div>
                         <?php endif; ?>
                     </div>
                     <div style="flex:1;min-width:0;">
                         <div class="d-flex justify-between align-center">
-                            <strong style="color:var(--text-color);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><?= e($conv['name']) ?></strong>
+                            <strong style="color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><?= e($conv['name']) ?></strong>
                             <span class="text-xs text-muted"><?= format_date($conv['last_time'], 'H:i') ?></span>
                         </div>
                         <div class="text-sm <?= !$conv['is_read'] && !$conv['is_mine'] ? 'font-bold' : 'text-muted' ?>" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
@@ -58,7 +61,7 @@
                     $isMine = $msg['sender_id'] == \App\Core\Session::userId();
                 ?>
                     <div style="display:flex;flex-direction:column;max-width:70%;<?= $isMine ? 'align-self:flex-end;' : 'align-self:flex-start;' ?>">
-                        <div style="padding:10px 16px;border-radius:16px;<?= $isMine ? 'background:var(--primary-color);color:white;border-bottom-right-radius:4px;' : 'background:var(--bg-secondary);color:var(--text-color);border-bottom-left-radius:4px;' ?>">
+                        <div style="padding:10px 16px;border-radius:16px;<?= $isMine ? 'background:var(--accent-primary);color:white;border-bottom-right-radius:4px;' : 'background:var(--bg-tertiary);color:var(--text-primary);border-bottom-left-radius:4px;' ?>">
                             <?= nl2br(e($msg['body'])) ?>
                         </div>
                         <div class="text-xs text-muted" style="margin-top:4px;<?= $isMine ? 'text-align:right;' : 'text-align:left;' ?>">

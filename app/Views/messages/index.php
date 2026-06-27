@@ -2,8 +2,11 @@
 <div class="animate-fade-in" style="display:flex;height:calc(100vh - 120px);gap:20px;">
     <!-- Sidebar Percakapan -->
     <div class="card" style="width:300px;display:flex;flex-direction:column;">
-        <div class="card-header" style="border-bottom:1px solid var(--border-color);padding:16px;">
+        <div class="card-header d-flex justify-between align-center" style="border-bottom:1px solid var(--border-color);padding:16px;">
             <h3 style="margin:0;">Pesan</h3>
+            <a href="<?= url('/messages/new') ?>" class="btn btn-sm btn-primary" style="padding:4px 8px; border-radius:8px;" title="Chat Baru">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            </a>
         </div>
         <div class="list-group" style="flex:1;overflow-y:auto;padding:0;">
             <?php if (empty($conversations)): ?>

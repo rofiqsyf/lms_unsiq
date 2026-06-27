@@ -80,6 +80,7 @@ $router->get('/calendar', [CalendarController::class, 'index'], ['auth']);
 $router->get('/calendar/events', [CalendarController::class, 'events'], ['auth']);
 $router->post('/calendar/events', [CalendarController::class, 'store'], ['auth', 'role:admin']);
 $router->post('/calendar/events/{id}/delete', [CalendarController::class, 'destroy'], ['auth', 'role:admin']);
+$router->post('/calendar/events/{id}/update', [CalendarController::class, 'update'], ['auth', 'role:admin']);
 
 // ===========================================
 // REST API (SIAKAD Integration)
@@ -183,12 +184,20 @@ $router->get('/courses/{courseId}/grades/export', [GradeController::class, 'expo
 // ===========================================
 // GLOBAL SEARCH
 // ===========================================
-$router->get('/search', [SearchController::class, 'index'], ['auth']);
+$router->get('/search/ajax', [\App\Controllers\SearchController::class, 'ajax'], ['auth']);
+$router->get('/search', [\App\Controllers\SearchController::class, 'index'], ['auth']);
+
+// ===========================================
+// GAMIFICATION
+// ===========================================
+$router->get('/gamification/streak', [\App\Controllers\GamificationController::class, 'streak'], ['auth', 'role:mahasiswa']);
+$router->get('/gamification/rewards', [\App\Controllers\GamificationController::class, 'rewards'], ['auth', 'role:mahasiswa']);
 
 // ===========================================
 // MESSAGES (Direct Messaging)
 // ===========================================
 $router->get('/messages', [MessageController::class, 'index'], ['auth']);
+$router->get('/messages/new', [MessageController::class, 'create'], ['auth']);
 $router->get('/messages/{userId}', [MessageController::class, 'show'], ['auth']);
 $router->post('/messages/{userId}', [MessageController::class, 'store'], ['auth']);
 

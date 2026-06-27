@@ -30,6 +30,32 @@ class MessageController extends BaseController
         ]);
     }
 
+    /** GET /messages/new */
+    public function create(): void
+    {
+        $this->setTitle('Mulai Chat Baru');
+        $this->setBreadcrumbs([['label' => 'Dashboard', 'url' => '/dashboard'], ['label' => 'Pesan', 'url' => '/messages'], ['label' => 'Cari Kontak']]);
+
+        $conversations = $this->messageModel->getConversations(Session::userId());
+        
+        $search = $this->query('q', '');
+        
+        // Paginate users (exclude self)
+        $usersData = $this->userModel->paginateUsers(1, 50, $search);
+        
+        // Filter out current user from results just in case
+        $filteredUsers = array_filter($usersData['data'], function($u) {
+            return $u['id'] != Session::userId();
+        });
+
+        $this->render('messages/create', [
+            'pageTitle'     => 'Mulai Chat Baru',
+            'conversations' => $conversations,
+            'search'        => $search,
+            'users'         => $filteredUsers
+        ]);
+    }
+
     /** GET /messages/{userId} */
     public function show(int $otherUserId): void
     {

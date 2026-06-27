@@ -59,6 +59,33 @@ class CalendarController extends BaseController
         $this->redirect(url('/calendar'));
     }
 
+    /** POST /calendar/events/{id}/update */
+    public function update(int $id): void
+    {
+        $this->validateCSRF();
+        if (!has_role('admin')) { $this->back(); return; }
+
+        $data = $this->allInput();
+        $this->validate($data, [
+            'title'      => 'required',
+            'start_date' => 'required',
+            'end_date'   => 'required',
+            'event_type' => 'required'
+        ]);
+
+        $this->eventModel->update($id, [
+            'title'       => $data['title'],
+            'start_date'  => $data['start_date'],
+            'end_date'    => $data['end_date'],
+            'event_type'  => $data['event_type'],
+            'description' => $data['description'] ?? ''
+        ]);
+
+        Logger::log('update_event', 'calendar', $id, 'Mengubah agenda: ' . $data['title']);
+        flash_success('Agenda berhasil diubah.');
+        $this->redirect(url('/calendar'));
+    }
+
     /** POST /calendar/events/{id}/delete */
     public function destroy(int $id): void
     {
