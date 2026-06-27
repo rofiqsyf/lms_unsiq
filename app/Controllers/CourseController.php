@@ -138,6 +138,8 @@ class CourseController extends BaseController
 
         $schedules = $this->scheduleModel->getByCourse($id);
         $liveMeetings = $this->meetingModel->getActiveByCourse($id);
+        
+        $students = $this->enrollmentModel->getCourseStudents($id);
 
         // Check if student is enrolled
         $isEnrolled = false;
@@ -160,6 +162,7 @@ class CourseController extends BaseController
             'schedules'   => $schedules,
             'liveMeetings'=> $liveMeetings,
             'isEnrolled'  => $isEnrolled,
+            'students'    => $students,
         ]);
     }
 
@@ -195,6 +198,16 @@ class CourseController extends BaseController
     {
         $this->validateCSRF();
         $data = $this->allInput();
+
+        $course = $this->courseModel->findById($id);
+        if (!$course) { $this->redirect(url('/courses')); return; }
+
+        // Authorization: only owner dosen or admin
+        if (!has_role('admin') && $course['dosen_id'] != Session::userId()) {
+            flash_error('Anda tidak memiliki akses.');
+            $this->redirect(url('/courses'));
+            return;
+        }
 
         $this->validate($data, [
             'code' => "required|unique:courses,code,{$id}",
@@ -253,7 +266,7 @@ class CourseController extends BaseController
 
         $this->enrollmentModel->unenroll($userId, $courseId);
         flash_success('Mahasiswa berhasil dikeluarkan dari mata kuliah.');
-        $this->redirect(url('/users/' . $userId));
+        $this->redirect(url('/courses/' . $courseId));
     }
 
     /**
@@ -302,6 +315,12 @@ class CourseController extends BaseController
         }
 
         $courseId = $schedule['course_id'];
+        $course = $this->courseModel->findById($courseId);
+        if (!has_role('admin') && $course['dosen_id'] != Session::userId()) {
+            flash_error('Anda tidak memiliki akses.');
+            $this->back();
+            return;
+        }
         $course = $this->courseModel->findById($courseId);
         
         if (has_role('dosen') && $course['dosen_id'] !== Session::userId()) {
@@ -362,6 +381,12 @@ class CourseController extends BaseController
 
         $courseId = $meeting['course_id'];
         $course = $this->courseModel->findById($courseId);
+        if (!has_role('admin') && $course['dosen_id'] != Session::userId()) {
+            flash_error('Anda tidak memiliki akses.');
+            $this->back();
+            return;
+        }
+        $course = $this->courseModel->findById($courseId);
         
         if (has_role('dosen') && $course['dosen_id'] !== Session::userId()) {
             $this->back();
@@ -378,6 +403,17 @@ class CourseController extends BaseController
     public function destroy(int $id): void
     {
         $this->validateCSRF();
+        
+        $course = $this->courseModel->findById($id);
+        if (!$course) { $this->redirect(url('/courses')); return; }
+
+        // Authorization: only owner dosen or admin
+        if (!has_role('admin') && $course['dosen_id'] != Session::userId()) {
+            flash_error('Anda tidak memiliki akses.');
+            $this->redirect(url('/courses'));
+            return;
+        }
+
         $this->courseModel->delete($id);
         flash_success('Mata kuliah berhasil dihapus.');
         $this->redirect(url('/courses'));

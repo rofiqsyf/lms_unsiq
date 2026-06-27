@@ -409,6 +409,59 @@
                 </div>
             </div>
 
+            <!-- Peserta Kelas (Mahasiswa) -->
+            <?php if (has_role('admin', 'dosen')): ?>
+            <div class="premium-card" style="margin-top: 24px;">
+                <div class="d-flex justify-between align-center mb-4">
+                    <h3 style="font-size:1.1rem; margin:0; display:flex; align-items:center; gap:6px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--accent-primary);"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        Peserta Kelas (<?= count($students ?? []) ?>)
+                    </h3>
+                </div>
+                
+                <?php if (empty($students)): ?>
+                    <div class="empty-state text-center p-4">
+                        <p class="text-muted">Belum ada mahasiswa yang terdaftar di kelas ini.</p>
+                    </div>
+                <?php else: ?>
+                    <div class="table-responsive">
+                        <table class="table" style="width:100%; border-collapse:collapse;">
+                            <thead>
+                                <tr style="border-bottom:2px solid #f1f5f9; text-align:left;">
+                                    <th style="padding:12px 8px; color:var(--text-muted); font-size:0.85rem; text-transform:uppercase;">NIM</th>
+                                    <th style="padding:12px 8px; color:var(--text-muted); font-size:0.85rem; text-transform:uppercase;">Nama</th>
+                                    <th style="padding:12px 8px; color:var(--text-muted); font-size:0.85rem; text-transform:uppercase;">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($students as $student): ?>
+                                    <tr style="border-bottom:1px solid #f1f5f9; transition:background 0.2s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                                        <td style="padding:12px 8px; font-weight:600; font-size:0.9rem;"><?= e($student['nim_nidn']) ?></td>
+                                        <td style="padding:12px 8px;">
+                                            <div class="d-flex align-center gap-2">
+                                                <img src="<?= !empty($student['avatar']) ? upload_url($student['avatar']) : 'https://ui-avatars.com/api/?name='.urlencode($student['name'] ?? 'U').'&background=6366f1&color=fff' ?>" alt="Avatar" style="width:30px; height:30px; border-radius:50%; object-fit:cover;">
+                                                <span style="font-weight:600; font-size:0.95rem;"><?= e($student['name']) ?></span>
+                                            </div>
+                                        </td>
+                                        <td style="padding:12px 8px;">
+                                            <?php if (has_role('admin')): ?>
+                                            <form method="POST" action="<?= url('/courses/' . $course['id'] . '/unenroll/' . $student['user_id']) ?>" onsubmit="return confirm('Keluarkan mahasiswa ini dari kelas?');" style="display:inline;">
+                                                <?= csrf_field() ?>
+                                                <button type="submit" class="btn btn-sm btn-danger" style="border-radius:6px; padding:4px 8px; font-size:0.8rem;">Hapus</button>
+                                            </form>
+                                            <?php else: ?>
+                                            <span class="text-muted text-xs">-</span>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
+            </div>
+            <?php endif; ?>
+
         </div>
 
         <!-- RIGHT COLUMN (Sidebar) -->

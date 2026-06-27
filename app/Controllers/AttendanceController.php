@@ -63,6 +63,12 @@ class AttendanceController extends BaseController
         $course = $this->courseModel->findById($courseId);
         if (!$course) { $this->redirect(url('/courses')); return; }
 
+        if (!has_role('admin') && $course['dosen_id'] != Session::userId()) {
+            flash_error('Anda tidak memiliki akses.');
+            $this->redirect(url('/courses'));
+            return;
+        }
+
         $nextMeeting = $this->attendanceModel->getNextMeetingNumber($courseId);
 
         $this->setTitle('Buat Pertemuan Baru');
@@ -84,6 +90,14 @@ class AttendanceController extends BaseController
     public function store(int $courseId): void
     {
         $this->validateCSRF();
+        
+        $course = $this->courseModel->findById($courseId);
+        if (!$course || (!has_role('admin') && $course['dosen_id'] != Session::userId())) {
+            flash_error('Anda tidak memiliki akses.');
+            $this->redirect(url('/courses'));
+            return;
+        }
+
         $data = $this->allInput();
         $this->validate($data, ['meeting_number' => 'required|numeric', 'meeting_date' => 'required']);
 
@@ -138,6 +152,13 @@ class AttendanceController extends BaseController
         $this->validateCSRF();
         $attendance = $this->attendanceModel->findById($id);
         if (!$attendance) { $this->redirect(url('/courses')); return; }
+
+        $course = $this->courseModel->findById($attendance['course_id']);
+        if (!has_role('admin') && $course['dosen_id'] != Session::userId()) {
+            flash_error('Anda tidak memiliki akses.');
+            $this->redirect(url('/courses'));
+            return;
+        }
 
         $data = $this->allInput();
         $statuses = $data['status'] ?? [];

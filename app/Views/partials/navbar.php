@@ -24,15 +24,21 @@ try {
         .dynamic-navbar {
             padding: 8px 12px;
             border-radius: 20px;
+            flex-wrap: wrap;
         }
         .mobile-menu-toggle {
             display: block;
         }
-        #global-search-input {
-            width: 100px !important;
+        #global-search-form {
+            order: 3;
+            width: 100%;
+            margin-top: 8px !important;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 12px;
+            border-radius: 12px;
         }
-        #global-search-input:focus {
-            width: 150px !important;
+        #global-search-input {
+            width: 100% !important;
         }
         .nav-divider {
             display: none;

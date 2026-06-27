@@ -232,8 +232,14 @@ class QuizController extends BaseController
     {
         $this->validateCSRF();
         $data = $this->allInput();
-        $quiz = $this->quizModel->findById($id);
+        $quiz = $this->quizModel->findWithCourse($id);
         if (!$quiz) { $this->redirect(url('/courses')); return; }
+
+        if (!has_role('admin') && $quiz['dosen_id'] != Session::userId()) {
+            flash_error('Anda tidak memiliki akses.');
+            $this->redirect(url('/quizzes/' . $id));
+            return;
+        }
 
         $this->validate($data, ['title' => 'required|min:3', 'duration_minutes' => 'required|numeric']);
 
@@ -258,6 +264,15 @@ class QuizController extends BaseController
     public function storeQuestion(int $quizId): void
     {
         $this->validateCSRF();
+        $quiz = $this->quizModel->findWithCourse($quizId);
+        if (!$quiz) { $this->back(); return; }
+
+        if (!has_role('admin') && $quiz['dosen_id'] != Session::userId()) {
+            flash_error('Anda tidak memiliki akses.');
+            $this->back();
+            return;
+        }
+
         $data = $this->allInput();
         $this->validate($data, ['question_text' => 'required|min:3', 'points' => 'required|numeric']);
 
@@ -294,6 +309,13 @@ class QuizController extends BaseController
         $question = $questionModel->findById($id);
         if (!$question) { $this->back(); return; }
 
+        $quiz = $this->quizModel->findWithCourse($question['quiz_id']);
+        if (!has_role('admin') && $quiz['dosen_id'] != Session::userId()) {
+            flash_error('Anda tidak memiliki akses.');
+            $this->back();
+            return;
+        }
+
         $this->validate($data, ['question_text' => 'required|min:3', 'points' => 'required|numeric']);
 
         $updateData = [
@@ -323,6 +345,13 @@ class QuizController extends BaseController
         $question = $questionModel->findById($id);
         if (!$question) { $this->back(); return; }
 
+        $quiz = $this->quizModel->findWithCourse($question['quiz_id']);
+        if (!has_role('admin') && $quiz['dosen_id'] != Session::userId()) {
+            flash_error('Anda tidak memiliki akses.');
+            $this->back();
+            return;
+        }
+
         $quizId = $question['quiz_id'];
         $questionModel->delete($id);
         flash_success('Pertanyaan berhasil dihapus.');
@@ -333,8 +362,14 @@ class QuizController extends BaseController
     public function destroy(int $id): void
     {
         $this->validateCSRF();
-        $quiz = $this->quizModel->findById($id);
+        $quiz = $this->quizModel->findWithCourse($id);
         if ($quiz) {
+            if (!has_role('admin') && $quiz['dosen_id'] != Session::userId()) {
+                flash_error('Anda tidak memiliki akses.');
+                $this->redirect(url('/courses/' . $quiz['course_id']));
+                return;
+            }
+
             $this->quizModel->delete($id);
             flash_success('Kuis berhasil dihapus.');
             $this->redirect(url('/courses/' . $quiz['course_id']));
