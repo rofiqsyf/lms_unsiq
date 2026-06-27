@@ -109,6 +109,10 @@ class DashboardController extends BaseController
         $announcementModel = new Announcement();
         $notificationModel = new Notification();
         $academicEventModel = new AcademicEvent();
+        $submissionModel = new Submission();
+
+        $totalSubmissions = $submissionModel->count('user_id = ?', [$userId]);
+        $xpPoints = $totalSubmissions * 10;
 
         $data = [
             'pageTitle'         => 'Mahasiswa Dashboard',
@@ -119,6 +123,7 @@ class DashboardController extends BaseController
             'recentGrades'      => $enrollmentModel->getRecentGrades($userId, 5),
             'recentAnnouncements' => $announcementModel->getForStudent($userId, 5),
             'unreadNotifications' => $notificationModel->countUnread($userId),
+            'xpPoints'          => $xpPoints,
         ];
 
         $this->render('dashboard/mahasiswa', $data);

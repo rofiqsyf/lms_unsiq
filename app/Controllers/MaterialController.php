@@ -82,6 +82,15 @@ class MaterialController extends BaseController
         $this->validateCSRF();
         $data = $this->allInput();
         $material = $this->materialModel->findById($id);
+        if (!$material) { $this->redirect(url('/courses')); return; }
+
+        $course = (new \App\Models\Course())->findById($material['course_id']);
+        if (!has_role('admin') && $course['dosen_id'] != \App\Core\Session::userId()) {
+            flash_error('Anda tidak memiliki akses.');
+            $this->redirect(url('/courses/' . $material['course_id']));
+            return;
+        }
+
         $this->validate($data, ['title' => 'required|min:3|max:200']);
 
         $updateData = [
@@ -116,6 +125,13 @@ class MaterialController extends BaseController
         $this->validateCSRF();
         $material = $this->materialModel->findById($id);
         if ($material) {
+            $course = (new \App\Models\Course())->findById($material['course_id']);
+            if (!has_role('admin') && $course['dosen_id'] != \App\Core\Session::userId()) {
+                flash_error('Anda tidak memiliki akses.');
+                $this->redirect(url('/courses/' . $material['course_id']));
+                return;
+            }
+
             FileUploader::delete($material['file_path']);
             $this->materialModel->delete($id);
             flash_success('Materi berhasil dihapus.');

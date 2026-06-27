@@ -88,7 +88,7 @@
             <div style="background: #dcfce7; border-radius: 50%; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="#10b981" stroke="#059669" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             </div>
-            <div style="font-size: 32px; font-weight: 800; color: #15803d; line-height: 1;">120</div>
+            <div style="font-size: 32px; font-weight: 800; color: #15803d; line-height: 1;"><?= number_format($xpPoints ?? 0) ?></div>
             <div style="font-size: 13px; font-weight: 600; color: #166534; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px;">Poin XP</div>
         </a>
 

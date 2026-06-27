@@ -86,8 +86,15 @@ class AssignmentController extends BaseController
     {
         $this->validateCSRF();
         $data = $this->allInput();
-        $assignment = $this->assignmentModel->findById($id);
+        $assignment = $this->assignmentModel->findWithCourse($id);
         if (!$assignment) { $this->redirect(url('/courses')); return; }
+
+        // Authorization: only owner dosen or admin
+        if (!has_role('admin') && $assignment['dosen_id'] != \App\Core\Session::userId()) {
+            flash_error('Anda tidak memiliki akses untuk mengubah tugas ini.');
+            $this->redirect(url('/assignments/' . $id));
+            return;
+        }
 
         $this->validate($data, ['title' => 'required|min:3', 'deadline' => 'required', 'max_score' => 'required|numeric']);
 
@@ -208,8 +215,15 @@ class AssignmentController extends BaseController
     public function destroy(int $id): void
     {
         $this->validateCSRF();
-        $assignment = $this->assignmentModel->findById($id);
+        $assignment = $this->assignmentModel->findWithCourse($id);
         if ($assignment) {
+            // Authorization: only owner dosen or admin
+            if (!has_role('admin') && $assignment['dosen_id'] != \App\Core\Session::userId()) {
+                flash_error('Anda tidak memiliki akses untuk menghapus tugas ini.');
+                $this->redirect(url('/courses/' . $assignment['course_id']));
+                return;
+            }
+
             $this->assignmentModel->delete($id);
             flash_success('Tugas berhasil dihapus.');
             $this->redirect(url('/courses/' . $assignment['course_id']));
